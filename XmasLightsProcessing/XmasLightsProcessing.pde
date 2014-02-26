@@ -35,14 +35,24 @@ import ddf.minim.*;
 Minim minim;
 AudioInput in;
 FFT fft;
+float[] lastY;
+float[] lastVal;
+int bufffer_size=1024;
+float sample_rate=44100;
 
 int[] values = { Arduino.LOW, Arduino.LOW, Arduino.LOW, Arduino.LOW,
  Arduino.LOW, Arduino.LOW, Arduino.LOW, Arduino.LOW, Arduino.LOW,
  Arduino.LOW, Arduino.LOW, Arduino.LOW, Arduino.LOW, Arduino.LOW };
 
 void setup() {
-  size(1000,600);
-  
+  size(1000,600);//creates a window size 1000x600
+  frame.setResizable(true);//allows the size to be changed
+   background(255,250,255);//sets background to white
+   minim=new Minim(this);//creates a new audio objecy
+   in = minim.getLineIn(Minim.MONO,buffer_size,sample_rate);//creates an audio input
+   fft = new FFT(in.bufferSize(), in.sampleRate());//creates a frequency analyzer
+   fft.logAverages(16, 2);//
+   fft.window(FFT.HAMMING);
   // Prints out the available serial ports.
   println(Arduino.list());
   
@@ -61,7 +71,6 @@ void setup() {
 }
 
 void draw() {
-  background(255,250,255);//Sets Background White
 }
 
 void mousePressed()
