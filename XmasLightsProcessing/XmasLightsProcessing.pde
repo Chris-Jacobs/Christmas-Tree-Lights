@@ -31,6 +31,7 @@ String arduinoMessage = "";
 int[] values = { Arduino.LOW, Arduino.LOW, Arduino.LOW, Arduino.LOW,
  Arduino.LOW, Arduino.LOW, Arduino.LOW, Arduino.LOW, Arduino.LOW,
  Arduino.LOW, Arduino.LOW, Arduino.LOW, Arduino.LOW, Arduino.LOW };
+ int counter=0;
 int leftBorder()   {
   return int(.05 * width); 
 }
@@ -62,7 +63,7 @@ void setup() {
 }
 
 void draw() {
-     data=serial.readString();//reads sensor data from the serial
+     //data=serial.readString();//reads sensor data from the serial
   
     // Detect resizes
     if(width != lastWidth || height != lastHeight)
@@ -101,7 +102,15 @@ void draw() {
     // If we've hit a beat, bring the brightness of the bar up to full
     if(biggestValChange > beatThreshold)
     {
-      println("Beat");
+      print("Beat");
+      if(counter==1){
+      background(51);
+      counter=0;
+      }
+      else{
+        counter++;
+        background(1000);
+      }
     }  
      
       // Tell the arduino to draw
@@ -119,14 +128,7 @@ void draw() {
       }
     }
     // Show the beat threshold if it was adjusted recently
-    if(showBeatThreshold)
-    {
-      fill(255,255,255);
-      textAlign(RIGHT, TOP);
-      text("beat threshold:"+nf(beatThreshold,1,2), width-rightBorder(), topBorder());
-      showBeatThreshold=false;
-    }
-        
+
     // Display the frame rate
     fill(16, 16, 16);
     if(!fullscreen)
