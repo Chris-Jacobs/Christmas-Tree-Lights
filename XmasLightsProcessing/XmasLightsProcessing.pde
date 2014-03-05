@@ -9,6 +9,15 @@ Arduino arduino;
 Minim minim;
 AudioInput in;
 FFT fft;
+//Arduino Variables
+String data;
+int relay1=2;
+boolean relay1TF=false;
+int relay2=3;
+boolean relay2TF=false;
+int outputs[]={relay1,relay2};
+boolean outputsTF[]={relay1TF,relay2TF};
+//Audio Variables
 float valScale = 1.0;
 float maxVisible = 10.0;
 float beatThreshold = 0.25;
@@ -17,21 +26,12 @@ float autoColorOffset = 0.01;
 float[] lastVal;
 int buffer_size=1024;
 float sample_rate=44100;
+//Display Variables
 int lastWidth=1000;
 int lastHeight=600;
 boolean fullscreen = false;
-String data;
-int relay1=2;
-boolean relay1TF=false;
-int relay2=3;
-boolean relay2TF=false;
-boolean arduinoConnected = false;
-int arduinoIndex = 0;
-String arduinoMessage = "";
-int[] values = { Arduino.LOW, Arduino.LOW, Arduino.LOW, Arduino.LOW,
- Arduino.LOW, Arduino.LOW, Arduino.LOW, Arduino.LOW, Arduino.LOW,
- Arduino.LOW, Arduino.LOW, Arduino.LOW, Arduino.LOW, Arduino.LOW };
- int counter=0;
+//Misc Variables
+int counter=0;
 int leftBorder()   {
   return int(.05 * width); 
 }
@@ -77,16 +77,24 @@ void draw() {
   
   
     fft.forward(in.mix);//Steps forward int the audio
-    
-    
-    int iCount = fft.avgSize();//Number of Averages being calculated
-    float biggestValChange = 0;
+    audioAnalyze();
+    // Display the frame rate
+    fill(16, 16, 16);
+    if(!fullscreen)
+    {
+    frame.setTitle("Christmas Tree Lights ("+nf(frameRate,2,1)+" fps)");
+    }
+
+}
+void audioAnalyze(){
+  int iCount = fft.avgSize();//Number of Averages being calculated
+    float biggestValChange = 0;//Biggest Change from pervious 
     
     for(int i = 0; i < iCount; i++) {//Loops through all the audio averages
       
       float iPercent = 1.0*i/iCount;//Percentage of Audio Analyzed
       
-      float highFreqscale = 1.0 + pow(iPercent, 4) * 2.0;//
+      float highFreqscale = 1.0 + pow(iPercent, 4) * 2.0;//Gets the Frequncy Range of the current step
       
       float val = sqrt(fft.getAvg(i)) * valScale * highFreqscale / maxVisible;
       float valDiff = val-lastVal[i];
@@ -112,30 +120,6 @@ void draw() {
         background(1000);
       }
     }  
-     
-      // Tell the arduino to draw
-    if (arduinoConnected)
-    {
-      try
-      {
-        //Do Arduino Stuff
-      }
-      catch (Exception e) {
-        arduinoConnected = false;
-        arduinoMessage = "Lost connection!  Press TAB to reconnect.";
-        arduinoIndex--; // Pressing TAB advances, but we want to retry the same index
-        println(e);
-      }
-    }
-    // Show the beat threshold if it was adjusted recently
-
-    // Display the frame rate
-    fill(16, 16, 16);
-    if(!fullscreen)
-    {
-    frame.setTitle("Christmas Tree Lights ("+nf(frameRate,2,1)+" fps)");
-    }
-
 }
 void initLasts(){
   for(int i = 0; i < fft.avgSize(); i++) {
@@ -143,20 +127,24 @@ void initLasts(){
   }
   
 }
-void mousePressed(){
-}
 void stop(){//properly closes the program 
   in.close();
   minim.stop();
   super.stop();
 }
+
+void toggleOutput(int reference){ //toggles an output at a specfic spot in the outputs array
+   if(outputsTF[reference]==false)
+    outputsTF[reference]=true;
+  else if(outputsTF[reference]==true)
+    outputsTF[reference]=false;
+    arduino.digitalWrite(outputs[reference], outputs[reference]);
+}
+void turnOffLights(){   
+  toggleOutput(relay);
+}
 /*
-//Outputs and their state
-int relay1=2;
-boolean relay1TF=false;
-int relay2=3;
-boolean relay2TF=false;
-//Sensors and their value
+Sensors and their value
 int sleep=0;
 int sleepValue=0;
 long sleepTime=0;
@@ -169,13 +157,6 @@ int outputs[]={relay1,relay2};
 boolean outputsTF[]={relay1TF,relay2TF};
 int sensors[]={};
 int sensorsValue[]={};
-void setup() {
-  for(int i=2;i<=11;i++){
-    pinMode(i,OUTPUT);
-  } 
-
-}
-
 void loop() {
       if(sleepActive==true){
         if(millis()-timeSleepStart>sleepTime){//if the sleep time is up
@@ -204,19 +185,6 @@ void potentiometerToTime(){
       sleepTime=sleepValue/100*36000;// changes analog into milliseconds for timer
       timeSleepStart=getTime();  //gets the start time of the sleep timer
    }
-}
-void toggleOutput(int reference){ //toggles an output at a specfic spot in the outputs array
-   if(outputsTF[reference]==false)
-    outputsTF[reference]=true;
-  else if(outputsTF[reference]==true)
-    outputsTF[reference]=false;
-  digitalWrite(outputs[reference], outputs[reference]);
-}
-void turnOffLights(){   //declared for to ease use
-  toggleOutput(relay);
-}
-long getTime(){    //gets the time since the program started
-  return millis();
 }
 */
 
