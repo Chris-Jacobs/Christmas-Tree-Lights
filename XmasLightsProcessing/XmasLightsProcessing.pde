@@ -1,4 +1,4 @@
-import g4p_controls.*;
+import controlP5.*;
 import processing.serial.*;
 import cc.arduino.*;
 import ddf.minim.analysis.*;
@@ -8,6 +8,8 @@ Arduino arduino;
 Minim minim;
 AudioInput in;
 FFT fft;
+ControlP5 cp5;
+Textfield sleep;
 //Arduino Variables
 int relay1=2;
 boolean relay1TF=false;
@@ -46,6 +48,29 @@ int topBorder()    {
 }
 void setup() {
   size(1000,600);//creates a window size 1000x600
+  PFont font = createFont("arial",20);
+  cp5=new ControlP5(this);//sets a new controller for the gui
+  cp5.addTextfield("Hours")
+     .setPosition(200,100)
+     .setSize(200,40)
+     .setFont(font)
+     .setFocus(true)
+     .setText("00:");
+     ;
+     cp5.addTextfield("Minutes")
+     .setPosition(200,100)
+     .setSize(200,40)
+     .setFont(font)
+     .setFocus(true)
+     .setText("00:");
+     ;
+     cp5.addTextfield("Seconds")
+     .setPosition(200,100)
+     .setSize(200,40)
+     .setFont(font)
+     .setFocus(true)
+     .setText("00");
+     ;
   frame.setResizable(true);//allows the size to be changed
    background(255,250,255);//sets background to white
    minim=new Minim(this);//creates a new audio objecy
