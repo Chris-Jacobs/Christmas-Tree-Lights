@@ -1,7 +1,6 @@
+import g4p_controls.*;
 import processing.serial.*;
 import cc.arduino.*;
-
-
 import ddf.minim.analysis.*;
 import ddf.minim.*;
 Serial serial;
@@ -10,13 +9,14 @@ Minim minim;
 AudioInput in;
 FFT fft;
 //Arduino Variables
-String data;
 int relay1=2;
 boolean relay1TF=false;
 int relay2=3;
 boolean relay2TF=false;
 int outputs[]={relay1,relay2};
 boolean outputsTF[]={relay1TF,relay2TF};
+boolean audioActive=false;
+boolean sleepActive=false;
 //Audio Variables
 float valScale = 1.0;
 float maxVisible = 10.0;
@@ -63,7 +63,6 @@ void setup() {
 }
 
 void draw() {
-     //data=serial.readString();//reads sensor data from the serial
   
     // Detect resizes
     if(width != lastWidth || height != lastHeight)
@@ -74,15 +73,17 @@ void draw() {
       initLasts();
       println("resized");
     }
-  
+    text("Hi",100,100);
   
     fft.forward(in.mix);//Steps forward int the audio
-    audioAnalyze();
+    if(audioActive)
+      audioAnalyze();
+     
     // Display the frame rate
     fill(16, 16, 16);
     if(!fullscreen)
     {
-    frame.setTitle("Christmas Tree Lights ("+nf(frameRate,2,1)+" fps)");
+    frame.setTitle("Christmas Tree Lights");
     }
 
 }
@@ -110,6 +111,8 @@ void audioAnalyze(){
     // If we've hit a beat, bring the brightness of the bar up to full
     if(biggestValChange > beatThreshold)
     {
+      toggleOutput(0);
+      toggleOutput(1);
       print("Beat");
       if(counter==1){
       background(51);
@@ -119,7 +122,7 @@ void audioAnalyze(){
         counter++;
         background(1000);
       }
-    }  
+    }
 }
 void initLasts(){
   for(int i = 0; i < fft.avgSize(); i++) {
@@ -132,7 +135,6 @@ void stop(){//properly closes the program
   minim.stop();
   super.stop();
 }
-
 void toggleOutput(int reference){ //toggles an output at a specfic spot in the outputs array
    if(outputsTF[reference]==false)
     outputsTF[reference]=true;
@@ -140,9 +142,7 @@ void toggleOutput(int reference){ //toggles an output at a specfic spot in the o
     outputsTF[reference]=false;
     arduino.digitalWrite(outputs[reference], outputs[reference]);
 }
-void turnOffLights(){   
-  toggleOutput(relay);
-}
+
 /*
 Sensors and their value
 int sleep=0;
