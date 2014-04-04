@@ -32,6 +32,7 @@ float sample_rate=44100;
 //Sleep Variables
 int hour;
 int minute;
+int totalSeconds;
 //Display Variables
 int lastWidth=1000;
 int lastHeight=600;
@@ -215,15 +216,11 @@ void audioAnalyze(){
 }
 void sleepAnalyze(){
   setTime();
-  int hoursLeft=hour-hour();
-  int minutesLeft=minute-minute();
-  int secondsLeft=60-second();
-  if(hoursLeft<0)
-    hoursLeft=0;
-  if(minutesLeft<0)
-    minutesLeft=0;
-  if(secondsLeft<0)
-    secondsLeft=0;
+  int currentTime=timeToSeconds(hour(),minute(),second());
+  int secondsLeft=totalSeconds-currentTime;
+  int hoursLeft=secondsLeft/3600;
+  int minutesLeft=secondsLeft%3600/60;
+  int secondsLeft=secondsLeft%3600%60;
   TimerBox.setText(hoursLeft+":"+minutesLeft+":"+secondsLeft);
   if(hoursLeft==0&&minutesLeft==0&&secondsLeft==0){
     for(int i=0;i<outputsTF.length;i++){
@@ -234,9 +231,11 @@ void sleepAnalyze(){
     audioActive=false;
     
   }
-  
-  
 }
+  int timeToSeconds(int hour, int minute, int second){
+    return hour*3600+minute*60+second;
+  }
+  
 void setTime(){
   int givenHour=Integer.parseInt(Hour.getText());
   int givenMinute=Integer.parseInt(Minute.getText());
@@ -245,6 +244,7 @@ void setTime(){
     hour=givenHour+12;
   }
   else hour=givenHour;
+  int totalSeconds=timeToSeconds(hour,minute,0);
 }
 void initLasts(){
   for(int i = 0; i < fft.avgSize(); i++) {
