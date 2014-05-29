@@ -1,11 +1,4 @@
-<<<<<<< HEAD
-import g4p_controls.*;
-import controlP5.*;
-import processing.serial.*;
-import cc.arduino.*;
-import ddf.minim.analysis.*;
-import ddf.minim.*;
-=======
+
 //Libraries
 import controlP5.*;//gui
 import processing.serial.*;//default
@@ -20,7 +13,7 @@ Minim minim;//Audio Processor
 AudioInput in;//Audio Input
 FFT fft;//Frequency Analyzer
 ControlP5 cp5;//GUI Controller
->>>>>>> 6b93cb8af6c81505b8d54e0caffe313719cf11da
+
 
 //Arduino Variables
 int high=5;
@@ -31,11 +24,7 @@ int outputs[]={relay1};
 boolean outputsTF[]={relay1TF};
 boolean audioActive=true;
 boolean sleepActive=false;
-<<<<<<< HEAD
 boolean timerUp=false;
-=======
-
->>>>>>> 6b93cb8af6c81505b8d54e0caffe313719cf11da
 //Audio Variables
 float valScale = 1.0;
 float maxVisible = 10.0;
@@ -56,11 +45,7 @@ int lastWidth=1000;
 int lastHeight=600;
 PImage tree;
 boolean fullscreen = false;
-<<<<<<< HEAD
-boolean bgYellow;
-=======
-
->>>>>>> 6b93cb8af6c81505b8d54e0caffe313719cf11da
+boolean bgYellow
 //Misc Variables
 int counter=0;
 int leftBorder()   {
@@ -150,13 +135,9 @@ void setup() {
   PFont font = createFont("arial",20);
    background(255,255,255);//sets background to white
    createGUI();
-<<<<<<< HEAD
    tree= loadImage("tree.jpg");
    image(tree,400,0);
    minim=new Minim(this);//creates a new audio objecy
-=======
-   minim=new Minim(this);//creates a new audio object
->>>>>>> 6b93cb8af6c81505b8d54e0caffe313719cf11da
    in = minim.getLineIn(Minim.MONO,buffer_size,sample_rate);//creates an audio input
    fft = new FFT(in.bufferSize(), in.sampleRate());//creates a frequency analyzer
    fft.logAverages(16, 2);//create a smallest average frequency of 8
